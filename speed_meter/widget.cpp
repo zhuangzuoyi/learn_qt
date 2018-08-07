@@ -159,7 +159,6 @@ void Widget::mousePressEvent(QMouseEvent *e)
 
 void Widget::drawrect(QPainter *p)
 {
-
     p->save();
     QBrush bursh(Qt::white);
     p->setBrush(bursh);

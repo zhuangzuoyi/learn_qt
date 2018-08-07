@@ -33,6 +33,10 @@ private:
      int up_blank;
      int down_blank;
      int moving_ball;
+
+     int fall_flag;
+     int fall_step;
+     int moving_max;
      QPoint moving_point_old;
      QPoint first_ball_center;
      QPoint first_line_start;
