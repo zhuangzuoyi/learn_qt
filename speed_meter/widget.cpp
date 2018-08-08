@@ -22,6 +22,7 @@ Widget::Widget(QWidget *parent)
      QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, updateValue);
     timer->start(50);
+    red = 85;
 }
 
 
@@ -30,14 +31,16 @@ void Widget::updateValue(void)
     if(flag==0)
     {
         Speed +=1;
-        if(Speed ==50)
+        if(Speed ==100)
             flag =1;
     }else{
         Speed -=1;
         if(Speed == 0)
             flag =0;
     }
-
+    red = 255/100 * Speed+85;
+    if(red > 255)
+        red = 255;
     update();
 }
 
@@ -130,7 +133,7 @@ void Widget::drawSector(QPainter *p)
     float Sector_end_arc =  180;
     qDebug()<<"Sector:"<<Sector_start_arc<<","<<Sector_end_arc<<"Speed"<<Speed;
     p->save();
-    QBrush bursh(QColor(85,191,59));
+    QBrush bursh(QColor(red,191,59));
     p->setBrush(bursh);
    QRect rect(rect_s_x,rect_s_y,rect_size,rect_size);
     p->drawChord(rect,Sector_start_arc*16,Sector_end_arc*16);

@@ -27,6 +27,7 @@ private:
     int loop_size;
     int Speed;
     int flag;
+    int red;
 public slots:
     void updateValue(void);
 };
