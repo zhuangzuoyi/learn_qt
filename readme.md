@@ -25,4 +25,7 @@ QT widget实现圆形头像
 
 ![round_head](img/round_head/03.png)
 
-### speed_meter
+### PMS5003ST
+ 攀藤传感器PMS5003ST上位机，ESP8266接收PMS5003ST数据，通过TCP发送到PC，PC用QT解析数据并显示，
+
+![PMS5003ST](img/PMS5003ST.gif)
