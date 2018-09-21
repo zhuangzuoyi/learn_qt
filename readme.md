@@ -33,4 +33,5 @@ QT widget实现圆形头像
 
 ###  Car_meter
 一个车速仪表盘
+
 ![car_meter](img/car_meter.gif)
