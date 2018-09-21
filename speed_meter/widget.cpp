@@ -142,11 +142,15 @@ void Widget::drawSector(QPainter *p)
 
 void Widget::drawSector_cut(QPainter *p)
 {
+    dial_height  = rect.x() / 5 * 4;
+    dial_widht   = rect.x() / 5 * 4;
+    qDebug()<<dial_widht;
+    qDebug()<<dial_height;
     p->save();
     QPen pen(QColor(45,45,46));
     pen.setStyle(Qt::CustomDashLine);
    // pen.setColor();
-    QRect rect(0,rect_s_y+rect_size/2,500,500);
+    QRect rect(0,rect_s_y+rect_size/2,dial_widht,dial_height);
     QBrush bursh(QColor(45,45,46));
     p->setBrush(bursh);
     p->setPen(pen);
