@@ -14,6 +14,8 @@
 
 #define ANGLE_STEP     25
 
+#define SPEED_STEP     2.5
+
 Widget::Widget(QWidget *parent)
     : QWidget(parent)
 {
@@ -22,9 +24,11 @@ Widget::Widget(QWidget *parent)
     resize(720,720);
     Speed = 0;
 
+    Speed_task = 0;
+    Speed_target = 0;
     QTimer *timer = new QTimer(this);
     connect(timer,SIGNAL(timeout()),this,SLOT(timerUpDate()));
-    timer->start(1000);
+    timer->start(150);
 }
 
 Widget::~Widget()
@@ -32,11 +36,23 @@ Widget::~Widget()
 
 }
 
+void Widget::car_meter_test_task()
+{
+    if(Speed_task == Speed_target)
+    {
+        Speed_target = rand() % 100;
+    }else if(Speed_task < Speed_target)
+    {
+        Speed_task ++;
+    }else{
+        Speed_task --;
+    }
+    Speed = Speed_task;
+}
 
 void Widget::timerUpDate()
 {
-    Speed = rand() % 100;
-    qDebug()<<"The speed:"<<Speed;
+    car_meter_test_task();
     update();
 }
 
@@ -144,9 +160,9 @@ void Widget::draw_dial_speed(QPainter *p)
     //qDebug()<<dial_height;
     p->save();
     QRectF rectangle(DIAL_ONE_START_POINT_X+30, DIAL_ONE_START_POINT_Y+30, dial_widht-60,dial_height-60);
-    int startAngle = (215- Speed * 2.3) * 16;//dial_background_startangle * 16;
+    int startAngle = (215- Speed * SPEED_STEP) * 16;//dial_background_startangle * 16;
    // qDebug()<<dial_background_spanangle;
-    int spanAngle = Speed * 2.3 * 16;
+    int spanAngle = Speed * SPEED_STEP * 16;
    // qDebug()<<spanAngle;
 
     int focal_x = (dial_widht-100) / 2 + DIAL_ONE_START_POINT_X+50;

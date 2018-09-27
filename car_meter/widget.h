@@ -22,12 +22,15 @@ public:
     void draw_dial_tick(QPainter *p);
     void draw_dial_tick_02(QPainter *p);
     void draw_dial_scale(QPainter *p);
+    void car_meter_test_task();
 private slots:
     void timerUpDate();
 private:
     int dial_height;
     int dial_widht;
     int Speed;
+    int Speed_task;
+    int Speed_target;
 };
 
 #endif // WIDGET_H
