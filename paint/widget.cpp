@@ -101,6 +101,8 @@ Widget::Widget(QWidget *parent)
     brushStyleComboBox->addItem(tr("TexturePattern"),static_cast<int>(Qt::TexturePattern));
     connect(brushStyleComboBox,SIGNAL(activated(int)),this,SLOT (ShowBrush(int)));
 
+
+
     rightLayout =new QGridLayout;                   //控制面板的布局
     rightLayout->addWidget(shapeLabel,0,0);
     rightLayout->addWidget(shapeComboBox,0,1);
