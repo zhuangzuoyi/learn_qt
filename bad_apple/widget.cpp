@@ -34,6 +34,7 @@ Widget::Widget(QWidget *parent) :
     img_row=0;
     img_list=0;
     process_step =0;
+    ui->Showgif->setMovie(movie);
 }
 
 void Widget::newClientConnect(void)
@@ -223,7 +224,7 @@ void Widget::framechange(void)
         }
         line.append("\r\n");
     }
-    ui->Showgif->setText(line);
+//    ui->Showgif->setText(line);
     send_process(sending_data,dat_num);
 }
 
