@@ -22,9 +22,6 @@ public:
 private slots:
     void on_openbtn_clicked();
 
-    void on_bt1_clicked();
-
-    void on_bt2_clicked();
 
     void newClientConnect(void);
 
@@ -45,6 +42,8 @@ private:
 
     void send_process(QByteArray dat,int len);
     void send_process(void);
+    void load_gif();
+    void log(QString msg);
 private slots:
     void framechange(void);
 };

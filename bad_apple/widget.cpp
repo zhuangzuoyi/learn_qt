@@ -18,10 +18,7 @@ Widget::Widget(QWidget *parent) :
     ui->Showgif->setAlignment(Qt::AlignCenter);
 
     current_frame_index = 0;
-    this->ui->openbtn->setIcon(style()->standardIcon(QStyle::SP_DialogOpenButton));
 
-    this->ui->bt1->setIcon(style()->standardIcon(QStyle::SP_ArrowLeft));
-    this->ui->bt2->setIcon(style()->standardIcon(QStyle::SP_ArrowRight));
     movie = new QMovie(this);
     movie->setCacheMode(QMovie::CacheAll);
     connect(movie,SIGNAL(updated(QRect)),this,SLOT(framechange()));
@@ -35,11 +32,14 @@ Widget::Widget(QWidget *parent) :
     img_list=0;
     process_step =0;
     ui->Showgif->setMovie(movie);
+
+    load_gif();
 }
 
 void Widget::newClientConnect(void)
 {
     qDebug() << "new client connect";
+    log("new client connect");
     tcpSocket = tcpServer->nextPendingConnection();
     connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readMessage()));
     connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(disConnect()));
@@ -83,10 +83,6 @@ void Widget::disConnect()
     process_step =0;
 }
 
-
-
-
-
 Widget::~Widget()
 {
     delete ui;
@@ -94,7 +90,7 @@ Widget::~Widget()
 
 void Widget::on_openbtn_clicked()
 {
-   QString fileName = QFileDialog::getOpenFileName(this, tr("Open a Movie"));
+   QString fileName = ":image/Bad Apple.gif";
    if(fileName.isEmpty())
        return;
    movie->setFileName(fileName);
@@ -104,20 +100,17 @@ void Widget::on_openbtn_clicked()
    movie->jumpToFrame(current_frame_index);
 
 }
-
-void Widget::on_bt1_clicked()
+void Widget::load_gif()
 {
-    if(current_frame_index >0)
-        current_frame_index --;
-    movie->jumpToFrame(current_frame_index);
+   QString fileName = ":image/Bad Apple.gif";
+   if(fileName.isEmpty())
+       return;
+   movie->setFileName(fileName);
+   qDebug()<<movie->frameCount();
+   is_img_load = true;
+   process_step =0;
+   movie->jumpToFrame(current_frame_index);
 
-}
-
-void Widget::on_bt2_clicked()
-{
-    if(current_frame_index < movie->frameCount())
-        current_frame_index ++;
-    movie->jumpToFrame(current_frame_index);
 }
 
 void Widget::send_process(QByteArray dat,int len)
@@ -179,7 +172,7 @@ void Widget::framechange(void)
     unsigned char bitmask[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
 
     qDebug()<<"frame change"<<movie->currentImage().width()<<movie->currentImage().height();
-
+    log("frame change:" + QString::number(movie->currentFrameNumber()));
     //scale to fit 12864
     QImage last_img = movie->currentImage().scaledToHeight(64);
     if(last_img.width()>128)
@@ -198,9 +191,6 @@ void Widget::framechange(void)
     sending_data[0] = 0xab;
     qDebug()<<"After Scale:"<<last_img.height()<<last_img.width()<<dat_num;
 
-    QString line;
-    line.clear();
-
     for(int j=0;j<last_img.height();j++)
     {
 
@@ -212,20 +202,21 @@ void Widget::framechange(void)
             int y_index = j % 8;
             //----->
             int x_index = j / 8 * last_img.width() + i;
-            if(last_img.pixelColor(i,j).value()<100)
+            if(last_img.pixelColor(last_img.width()-i,j).value()>100)
             {
-                line.append(' ');
-            }
-            else
-            {
-                line.append('*');
                 sending_data[x_index+1] = (sending_data[x_index+1] | bitmask[y_index]) & 0x000000ff;
             }
+//            else
+//            {
+
+//            }
         }
-        line.append("\r\n");
+
     }
-//    ui->Showgif->setText(line);
     send_process(sending_data,dat_num);
 }
 
-
+void Widget::log(QString msg)
+{
+    this->ui->log->append(msg);
+}
