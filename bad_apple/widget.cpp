@@ -38,43 +38,21 @@ Widget::Widget(QWidget *parent) :
 
 void Widget::newClientConnect(void)
 {
-    qDebug() << "new client connect";
     log("new client connect");
     tcpSocket = tcpServer->nextPendingConnection();
     connect(tcpSocket,SIGNAL(readyRead()),this,SLOT(readMessage()));
     connect(tcpSocket,SIGNAL(disconnected()),this,SLOT(disConnect()));
-
     //init
     process_step =0;
-//    send_process();
-    if(is_img_load)
-    {
-        current_frame_index =0;
-        movie->jumpToFrame(current_frame_index);
-    }
+    load_gif();
 }
 
 void Widget::readMessage()
 {
-    qDebug() << "read client message";
     QByteArray buf;
     buf = tcpSocket->readAll();
-//    qDebug() << buf;
-    qDebug()<<"Received data"<<buf;
-    if(buf.startsWith("GET_SIZE:OK"))
-    {
-        qDebug()<<"jump to frame 0";
-        current_frame_index ++;
-        movie->jumpToFrame(current_frame_index);
-    }else if(buf.startsWith("GET_DAT:OK"))
-    {
-        if(current_frame_index < movie->frameCount())
-        {
-            current_frame_index ++;
-            movie->jumpToFrame(current_frame_index);
-        }
-
-    }
+    current_frame_index ++;
+    movie->jumpToFrame(current_frame_index);
 }
 
 void Widget::disConnect()
@@ -88,25 +66,12 @@ Widget::~Widget()
     delete ui;
 }
 
-void Widget::on_openbtn_clicked()
-{
-   QString fileName = ":image/Bad Apple.gif";
-   if(fileName.isEmpty())
-       return;
-   movie->setFileName(fileName);
-   qDebug()<<movie->frameCount();
-   is_img_load = true;
-   process_step =0;
-   movie->jumpToFrame(current_frame_index);
-
-}
 void Widget::load_gif()
 {
    QString fileName = ":image/Bad Apple.gif";
    if(fileName.isEmpty())
        return;
    movie->setFileName(fileName);
-   qDebug()<<movie->frameCount();
    is_img_load = true;
    process_step =0;
    movie->jumpToFrame(current_frame_index);
@@ -115,30 +80,26 @@ void Widget::load_gif()
 
 void Widget::send_process(QByteArray dat,int len)
 {
-    qDebug()<<"In send process";
-    if(process_step ==0)
+    if(tcpSocket != NULL)
     {
-        if(is_img_load && img_list !=0 && img_row !=0)
+        if(process_step ==0)
         {
-            //send width & height
-            QByteArray send_size(3,0);
-            send_size[0] = 0xaa;
-            send_size[1] = img_list;
-            send_size[2] = img_row;
-            if(tcpSocket != NULL)
+            if(is_img_load && img_list !=0 && img_row !=0)
+            {
+                //send width & height
+                QByteArray send_size(3,0);
+                send_size[0] = 0xaa;
+                send_size[1] = img_list;
+                send_size[2] = img_row;
+
                 tcpSocket->write(send_size.data(),3);
-            process_step ++;
-            qDebug()<<"send size";
+                process_step ++;
+            }
         }else{
-            qDebug()<<"send nothing";
-            qDebug()<<is_img_load;
-            qDebug()<<img_list;
-            qDebug()<<img_row;
+                tcpSocket->write(dat.data(),len);
         }
     }else{
-            if(tcpSocket != NULL)
-                tcpSocket->write(dat.data(),len);//datagram.length());
-            qDebug()<<"send dat";
+        log("In send task,no client,playing is not start");
     }
 }
 
@@ -170,8 +131,6 @@ void Widget::send_process(void)
 void Widget::framechange(void)
 {
     unsigned char bitmask[8] = {0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80};
-
-    qDebug()<<"frame change"<<movie->currentImage().width()<<movie->currentImage().height();
     log("frame change:" + QString::number(movie->currentFrameNumber()));
     //scale to fit 12864
     QImage last_img = movie->currentImage().scaledToHeight(64);
@@ -189,7 +148,6 @@ void Widget::framechange(void)
 
     QByteArray sending_data(1024,0);
     sending_data[0] = 0xab;
-    qDebug()<<"After Scale:"<<last_img.height()<<last_img.width()<<dat_num;
 
     for(int j=0;j<last_img.height();j++)
     {
@@ -202,14 +160,10 @@ void Widget::framechange(void)
             int y_index = j % 8;
             //----->
             int x_index = j / 8 * last_img.width() + i;
-            if(last_img.pixelColor(last_img.width()-i,j).value()>100)
+            if(last_img.pixelColor(last_img.width()-1-i,j).value()>100)
             {
                 sending_data[x_index+1] = (sending_data[x_index+1] | bitmask[y_index]) & 0x000000ff;
             }
-//            else
-//            {
-
-//            }
         }
 
     }

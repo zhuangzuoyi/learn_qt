@@ -20,9 +20,6 @@ public:
     ~Widget();
 
 private slots:
-    void on_openbtn_clicked();
-
-
     void newClientConnect(void);
 
     void readMessage();
