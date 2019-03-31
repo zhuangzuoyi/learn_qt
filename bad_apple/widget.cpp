@@ -51,6 +51,7 @@ void Widget::readMessage()
 {
     QByteArray buf;
     buf = tcpSocket->readAll();
+    qDebug()<<buf;
     current_frame_index ++;
     movie->jumpToFrame(current_frame_index);
 }
@@ -74,6 +75,7 @@ void Widget::load_gif()
    movie->setFileName(fileName);
    is_img_load = true;
    process_step =0;
+   current_frame_index = 0;
    movie->jumpToFrame(current_frame_index);
 
 }
@@ -94,8 +96,12 @@ void Widget::send_process(QByteArray dat,int len)
 
                 tcpSocket->write(send_size.data(),3);
                 process_step ++;
+                qDebug()<<"send shape";
+            }else{
+                qDebug()<<"send nothing";
             }
         }else{
+                qDebug()<<"send img data";
                 tcpSocket->write(dat.data(),len);
         }
     }else{
