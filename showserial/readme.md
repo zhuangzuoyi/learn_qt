@@ -29,8 +29,8 @@ int main(int argc, char *argv[])
 
 很浪费时间，于是，我就想着写了这个软件，把该软件的目录添加到环境变量，就可以在命令行中打开，如下，window 7  cmd中：
 
-![cmd](G:\mics\QT\learn_qt\showserial\img\cmd.png)
+![cmd](img\cmd.png)
 
 还有在VScode中的执行结果如下；
 
-​	![cmd](G:\mics\QT\learn_qt\showserial\img\vscode.png)
+​	![vscode](img\vscode.png)

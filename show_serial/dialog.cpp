@@ -18,9 +18,6 @@ Dialog::Dialog(QWidget *parent) :
     minimizeAction = new QAction(tr("Mi&nimize"), this);
     connect(minimizeAction, &QAction::triggered, this, &QWidget::hide);
 
-    maximizeAction = new QAction(tr("Ma&ximize"), this);
-    connect(maximizeAction, &QAction::triggered, this, &QWidget::showMaximized);
-
     restoreAction = new QAction(tr("&Restore"), this);
     connect(restoreAction, &QAction::triggered, this, &QWidget::showNormal);
 
@@ -29,7 +26,7 @@ Dialog::Dialog(QWidget *parent) :
 
     trayIconMenu = new QMenu(this);
     trayIconMenu->addAction(minimizeAction);
-    trayIconMenu->addAction(maximizeAction);
+
     trayIconMenu->addAction(restoreAction);
     trayIconMenu->addSeparator();
     trayIconMenu->addAction(quitAction);
@@ -37,8 +34,8 @@ Dialog::Dialog(QWidget *parent) :
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
     trayIcon->setIcon(icon);
-    trayIcon = new QSystemTrayIcon(this);
-
+    connect(trayIcon, &QSystemTrayIcon::activated, this, &Dialog::iconActivated);
+    trayIcon->show();
     update_serial_info();
 }
 
@@ -71,4 +68,18 @@ void Dialog::closeEvent(QCloseEvent *event)
 {
     hide();
     event->ignore();
+}
+
+
+void Dialog::iconActivated(QSystemTrayIcon::ActivationReason reason)
+{
+    switch (reason) {
+    case QSystemTrayIcon::Trigger:
+    case QSystemTrayIcon::DoubleClick:
+    case QSystemTrayIcon::MiddleClick:
+        show();
+        break;
+    default:
+        ;
+    }
 }

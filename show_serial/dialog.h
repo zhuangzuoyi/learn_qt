@@ -18,6 +18,10 @@ public:
     void update_serial_info(void);
     void keyPressEvent(QKeyEvent *event);
     void closeEvent(QCloseEvent *event);
+
+private slots:
+    void iconActivated(QSystemTrayIcon::ActivationReason reason);
+
 private:
     Ui::Dialog *ui;
     QSystemTrayIcon *trayIcon;
