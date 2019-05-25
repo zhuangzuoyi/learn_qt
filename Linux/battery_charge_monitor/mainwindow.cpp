@@ -3,6 +3,10 @@
 #include "QtBluetooth/QBluetoothDeviceDiscoveryAgent"
 #include "QDebug"
 #include "QtBluetooth"
+#include "QValueAxis"
+
+
+#define x_count_max 100
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -22,7 +26,60 @@ MainWindow::MainWindow(QWidget *parent) :
     m_deviceDiscoveryAgent->start(QBluetoothDeviceDiscoveryAgent::LowEnergyMethod);
 
     is_bt05_serve_found = false;
+
+    chart_init();
 }
+
+
+void MainWindow::chart_init(void)
+{
+    QChart *chart = new QChart();
+    chart->legend()->hide();
+    chart->setTitle("Battery'Voltage");
+
+    QValueAxis *axisX = new QValueAxis;
+    QValueAxis *axisY = new QValueAxis;
+    chart->addAxis(axisX, Qt::AlignBottom);
+    chart->addAxis(axisY, Qt::AlignLeft);
+    y_max = 0xffff;
+    chart->axisX()->setRange(0, x_count_max);
+    chart->axisY()->setRange(3.0, 5.0);
+    series = new QSplineSeries();
+    chart->addSeries(series);
+    series->attachAxis(axisX);
+    series->attachAxis(axisY);
+
+    ChartView = new QChartView(chart);
+    ChartView->setRenderHint(QPainter::Antialiasing);
+    ui->container->addWidget(ChartView);
+
+    temp_list.clear();
+}
+
+void MainWindow::update_chart(double temperature)
+{
+    QList<QPointF> point_temp;
+    point_temp.clear();
+    temp_list.append(temperature);
+    if(temp_list.length() > x_count_max)
+    {
+        temp_list.removeFirst();
+
+        for(int i=0;i<x_count_max;i++)
+        {
+            QPointF node(i,temp_list.at(i));
+            point_temp.append(node);
+        }
+    }else {
+        for(int i=0;i<temp_list.length();i++)
+        {
+            QPointF node(i,temp_list.at(i));
+            point_temp.append(node);
+        }
+    }
+    series->replace(point_temp);
+}
+
 
 
 void MainWindow::addDevice(const QBluetoothDeviceInfo &device)
@@ -157,6 +214,15 @@ void MainWindow::updateHeartRateValue(const QLowEnergyCharacteristic &c, const Q
     if (c.uuid() != QBluetoothUuid(QString("0000ffe1-0000-1000-8000-00805f9b34fb")))
         return;
     qDebug()<<value;
+    if(value.startsWith("S") && value.endsWith("E"))
+    {
+        QList<QString> temp_list = QString(value).split(":");
+        qDebug()<<temp_list;
+        QString voltage_str;
+        voltage_str.append(temp_list.at(2).at(0)).append(".").append(temp_list.at(2).at(1));
+        update_chart(voltage_str.toDouble());
+    }
+
 
 }
 

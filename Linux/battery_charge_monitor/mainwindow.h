@@ -5,6 +5,20 @@
 #include "QtBluetooth"
 #include "QList"
 
+#include "QChart"
+#include "QChartView"
+#include "QList"
+#include "QSplineSeries"
+#include <QtCharts/QChartGlobal>
+
+
+QT_CHARTS_BEGIN_NAMESPACE
+class QLineSeries;
+class QChart;
+QT_CHARTS_END_NAMESPACE
+
+QT_CHARTS_USE_NAMESPACE
+
 
 namespace Ui {
 class MainWindow;
@@ -33,12 +47,23 @@ private slots:
 private:
     Ui::MainWindow *ui;
     void connect2device(void);
+    void chart_init(void);
+    void update_chart(double temperature);
+
+
     QBluetoothDeviceDiscoveryAgent *m_deviceDiscoveryAgent;
     QLowEnergyController *m_control;
     QList<QBluetoothDeviceInfo> m_devices;
     bool is_bt05_serve_found;
     QLowEnergyDescriptor m_notificationDesc;
     QLowEnergyService *m_service;
+
+    QChart *chart;
+    QChartView *ChartView;
+    QList<double> temp_list;
+    QSplineSeries *series;
+    uint16_t index;
+    double y_max;
 };
 
 #endif // MAINWINDOW_H
