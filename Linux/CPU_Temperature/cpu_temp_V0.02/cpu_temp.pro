@@ -1,14 +1,14 @@
 #-------------------------------------------------
 #
-# Project created by QtCreator 2019-05-06T15:22:32
+# Project created by QtCreator 2019-05-04T21:19:57
 #
 #-------------------------------------------------
 
 QT       += core gui
-QT += charts serialport
+QT += charts
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-TARGET = loging
+TARGET = cpu_temp
 TEMPLATE = app
 
 # The following define makes your compiler emit warnings if you use
@@ -26,13 +26,13 @@ CONFIG += c++11
 
 SOURCES += \
         main.cpp \
-        widget.cpp
+        dialog.cpp
 
 HEADERS += \
-        widget.h
+        dialog.h
 
 FORMS += \
-        widget.ui
+        dialog.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
