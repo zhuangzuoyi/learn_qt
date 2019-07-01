@@ -25,13 +25,15 @@ public:
 public slots:
     void Timeout_handler();
 
+
+
 private:
     Ui::Dialog *ui;
 
     QSplineSeries *series;
     QValueAxis *axisX;
     QValueAxis *axisY;
-
+    QList<int> y_list;
     QChart *chart;
     QChartView *ChartView;
 

@@ -29,6 +29,7 @@ Dialog::Dialog(QWidget *parent) :
     ui->verticalLayout->addWidget(ChartView);
 
     x_index = 0;
+    y_list.clear();
     QTimer *timer = new QTimer(this);
     connect(timer, SIGNAL(timeout()), this, SLOT(Timeout_handler()));
     timer->start(200);
@@ -48,9 +49,17 @@ void Dialog::Timeout_handler()
     QString current_dt = dt.currentDateTime().toString("yyyy:MM:dd:hh:mm:ss:zzz");
     qsrand(dt.currentDateTime().toTime_t());
     int y = qrand() % 10;
-    series->append(x_index,y);
+    y_list.append(y);
+    if(y_list.length()>11)
+        y_list.removeFirst();
+    QList<QPointF> points;
+    points.clear();
+    for(int i=0;i<y_list.length();i++)
+    {
 
-    if(x_index > 10)
-        axisX->setRange(x_index-10, x_index);
-    x_index ++;
+        points.append(QPointF(i,y_list.at(i)));
+    }
+    series->replace(points);
 }
+
+
