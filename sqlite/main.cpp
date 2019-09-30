@@ -37,22 +37,19 @@ int main(int argc, char *argv[])
     QDateTime dt;
     QString current_dt = dt.currentDateTime().toString("yyyy:MM:dd:hh:mm:ss:zzz");
 
-
-
-
-
     qsrand(dt.currentDateTime().toTime_t());
     QString rand = QString::number(qrand());
     QString sql_insert = "insert into randdata values (";
     sql_insert.append("\"").append( current_dt + "\",").append(rand).append(")");
     sql_query.prepare(sql_insert);
+    qDebug()<<current_dt<<","<<rand;
     if(!sql_query.exec())
     {
         qDebug() << sql_query.lastError();
     }
     else
     {
-        qDebug() << "inserted Wang!";
+        qDebug() << "inserted success!";
     }
 
     db.close();
