@@ -5,8 +5,8 @@
 #include "QTimer"
 #include "QValueAxis"
 
-#define SENSOR_PATH  "/sys/class/hwmon/hwmon0/temp1_input"
-#define x_count_max 100
+#define SENSOR_PATH  "/sys/class/hwmon/hwmon1/temp1_input"
+
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -27,13 +27,13 @@ Dialog::Dialog(QWidget *parent) :
     chart->legend()->hide();
     chart->setTitle("CPU temperature");
 
-    QValueAxis *axisX = new QValueAxis;
-    QValueAxis *axisY = new QValueAxis;
+    QValueAxis *axisX = new QValueAxis();
+    QValueAxis *axisY = new QValueAxis();
     chart->addAxis(axisX, Qt::AlignBottom);
     chart->addAxis(axisY, Qt::AlignLeft);
-    y_max = 0xffff;
-    chart->axisX()->setRange(0, x_count_max);
-    chart->axisY()->setRange(20, 80);
+
+    axisX->setRange(0, 100);
+    axisY->setRange(20, 80);
     series = new QSplineSeries();
     chart->addSeries(series);
     series->attachAxis(axisX);
@@ -61,11 +61,11 @@ void Dialog::update_chart(double temperature)
     QList<QPointF> point_temp;
     point_temp.clear();
     temp_list.append(temperature);
-    if(temp_list.length() > x_count_max)
+    if(temp_list.length() > 100)
     {
         temp_list.removeFirst();
 
-        for(int i=0;i<x_count_max;i++)
+        for(int i=0;i<100;i++)
         {
             QPointF node(i,temp_list.at(i));
             point_temp.append(node);

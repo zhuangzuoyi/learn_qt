@@ -9,10 +9,7 @@
 #include "QSplineSeries"
 #include <QtCharts/QChartGlobal>
 
-QT_CHARTS_BEGIN_NAMESPACE
-class QLineSeries;
-class QChart;
-QT_CHARTS_END_NAMESPACE
+
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -46,7 +43,6 @@ private:
     QList<double> temp_list;
     QSplineSeries *series;
     uint16_t index;
-    double y_max;
 };
 
 #endif // DIALOG_H

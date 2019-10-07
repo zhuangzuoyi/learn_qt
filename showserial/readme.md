@@ -33,4 +33,4 @@ int main(int argc, char *argv[])
 
 还有在VScode中的执行结果如下；
 
-​	![vscode](img\vscode.png)
+![vscode](img\vscode.png)
