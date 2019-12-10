@@ -3,7 +3,8 @@
 #include "QSerialPort"
 #include "QDebug"
 #include "QSerialPortInfo"
-
+#include "QColorDialog"
+#include "QColor"
 
 Dialog::Dialog(QWidget *parent) :
     QDialog(parent),
@@ -43,5 +44,25 @@ void Dialog::on_open_clicked()
 
 void Dialog::on_send_clicked()
 {
+     QByteArray cmd;
+     cmd.resize(8);
+     cmd[0] = 0xaa;
+     cmd[1] = 0x55;
+     cmd[2] = 0x00;
+     cmd[3] = 0x10;
 
+     cmd[7] = 0x33;
+     cmd[8] = 0xee;
+
+     QColor color = QColorDialog::getColor(Qt::white, this);
+     qDebug()<<"red:"<<color.red();
+     qDebug()<<"greed"<<color.green();
+     qDebug()<<"blue"<<color.blue();
+     cmd[4] = color.red();
+     cmd[5] = color.green();
+     cmd[6] = color.blue();
+     if(serial.isOpen())
+     {
+         serial.write(cmd);
+     }
 }
