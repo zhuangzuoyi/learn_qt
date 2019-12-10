@@ -19,6 +19,8 @@ public:
 private slots:
     void on_open_clicked();
 
+    void on_send_clicked();
+
 private:
     Ui::Dialog *ui;
 
